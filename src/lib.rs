@@ -14,7 +14,7 @@ pub fn get_session_token() -> Result<models::response::SessionToken, Errors> {
   let mut resp: reqwest::Response = client.get(url.as_str()).header("DNT", 1).send()?;
   let text = resp.text().unwrap();
   let response: models::response::SessionToken = serde_xml_rs::from_str(text.as_str())?;
-  return Ok(response);
+  Ok(response)
 }
 
 pub fn login(
@@ -27,7 +27,7 @@ pub fn login(
   let url = format!("http://{}/api/user/login", dotenv::var("SMS_HOST")?);
   let password_hashed = prepare_password(username.clone(), password.clone(), token.clone());
   let request = models::request::Login {
-    username: username,
+    username,
     password: password_hashed,
     password_type: 4,
   };
@@ -43,7 +43,7 @@ pub fn login(
     .send()?;
   let text = resp.text().unwrap();
   let response = serde_xml_rs::from_str(text.as_str())?;
-  return Ok((get_response_headers(&resp), response));
+  Ok((get_response_headers(&resp), response))
 }
 
 pub fn get_sms(
@@ -91,13 +91,13 @@ pub fn get_sms(
   };
   if sms_empty_enum.is_some() && sms_get_enum.is_none() {
     response = models::response::Responses::SMSEmpty(sms_empty_enum.unwrap());
-    return Ok((get_response_headers(&resp), response));
+    Ok((get_response_headers(&resp), response))
   } else if sms_get_enum.is_some() {
     response = models::response::Responses::SMSGet(sms_get_enum.unwrap());
-    return Ok((get_response_headers(&resp), response));
+    Ok((get_response_headers(&resp), response))
   } else {
     response = models::response::Responses::Failed(failed_enum.unwrap());
-    return Ok((get_response_headers(&resp), response));
+    Ok((get_response_headers(&resp), response))
   }
 }
 
@@ -130,7 +130,7 @@ pub fn send_sms(
     .send()?;
   let text = resp.text().unwrap();
   let response: models::response::Responses = serde_xml_rs::from_str(text.as_str())?;
-  return Ok((get_response_headers(&resp), response));
+  Ok((get_response_headers(&resp), response))
 }
 
 pub fn read_sms(
@@ -140,7 +140,7 @@ pub fn read_sms(
 ) -> Result<(models::response::SessionToken, models::response::Responses), Errors> {
   let client: reqwest::Client = reqwest::Client::new();
   let url = format!("http://{}/api/sms/send-sms", dotenv::var("SMS_HOST")?);
-  let request = models::request::SMSRead { index: index };
+  let request = models::request::SMSRead { index };
   let mut resp: reqwest::Response = client
     .post(url.as_str())
     .body(serde_xml_rs::to_string(&request)?)
@@ -153,7 +153,7 @@ pub fn read_sms(
     .send()?;
   let text = resp.text().unwrap();
   let response: models::response::Responses = serde_xml_rs::from_str(text.as_str())?;
-  return Ok((get_response_headers(&resp), response));
+  Ok((get_response_headers(&resp), response))
 }
 
 pub fn delete_sms(
@@ -176,20 +176,20 @@ pub fn delete_sms(
     .send()?;
   let text = resp.text().unwrap();
   let response: models::response::Responses = serde_xml_rs::from_str(text.as_str())?;
-  return Ok((get_response_headers(&resp), response));
+  Ok((get_response_headers(&resp), response))
 }
 
 /* PRIVATE METHODS */
 fn prepare_password(username: String, password: String, token: String) -> String {
   let mashed = username.to_owned() + &sha256_and_b64(password).as_str() + &token;
-  return sha256_and_b64(mashed);
+  sha256_and_b64(mashed)
 }
 
 fn sha256_and_b64(item: String) -> String {
   let mut hasher = Sha256::new();
   hasher.input(item);
   let phex = hex::encode(hasher.result());
-  return base64::encode(&phex);
+  base64::encode(&phex)
 }
 
 fn create_headers(
@@ -220,7 +220,7 @@ fn create_headers(
     }
     None => {}
   };
-  return Ok(headers);
+  Ok(headers)
 }
 
 fn get_response_headers(response: &reqwest::Response) -> models::response::SessionToken {
@@ -234,7 +234,7 @@ fn get_response_headers(response: &reqwest::Response) -> models::response::Sessi
       None => "".to_owned(),
     },
   };
-  return headers;
+  headers
 }
 
 fn convert_vec_to_hashvec(vec: Vec<String>) -> String {
@@ -242,5 +242,5 @@ fn convert_vec_to_hashvec(vec: Vec<String>) -> String {
   for elem in vec {
     hashedvec.push(format!("<Phone>{}</Phone>", elem));
   }
-  return hashedvec.join("");
+  hashedvec.join("")
 }
