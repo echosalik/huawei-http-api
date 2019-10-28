@@ -139,7 +139,7 @@ pub fn read_sms(
   index: i32,
 ) -> Result<(models::response::SessionToken, models::response::Responses), Errors> {
   let client: reqwest::Client = reqwest::Client::new();
-  let url = format!("http://{}/api/sms/send-sms", dotenv::var("SMS_HOST")?);
+  let url = format!("http://{}/api/sms/set-read", dotenv::var("SMS_HOST")?);
   let request = models::request::SMSRead { index };
   let mut resp: reqwest::Response = client
     .post(url.as_str())
