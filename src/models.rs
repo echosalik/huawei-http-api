@@ -1,5 +1,5 @@
 pub mod request {
-  use serde::{Serialize, Deserialize};
+  use serde::{Deserialize, Serialize};
 
   #[derive(Debug, Serialize, Deserialize, PartialEq)]
   #[serde(rename = "request")]
@@ -8,7 +8,7 @@ pub mod request {
     pub username: String,
     pub password_type: u8,
     #[serde(rename = "Password")]
-    pub password: String
+    pub password: String,
   }
 
   #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -32,19 +32,19 @@ pub mod request {
   #[serde(rename = "request")]
   pub struct SMSSend {
     #[serde(rename = "Index")]
-    pub index : i32,
+    pub index: i32,
     #[serde(rename = "Phones")]
-    pub phones : String,
+    pub phones: String,
     #[serde(rename = "Sca")]
-    pub sca : String,
+    pub sca: String,
     #[serde(rename = "Content")]
-    pub content : String,
+    pub content: String,
     #[serde(rename = "Length")]
-    pub length : u32,
+    pub length: u32,
     #[serde(rename = "Reserved")]
-    pub reserved : u8,
+    pub reserved: u8,
     #[serde(rename = "Date")]
-    pub date : String,
+    pub date: String,
   }
 
   #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -57,24 +57,24 @@ pub mod request {
   #[serde(rename = "request")]
   pub struct SMSRead {
     #[serde(rename = "Index")]
-    pub index : i32,
+    pub index: i32,
   }
 }
 
 pub mod response {
-  use serde::{Serialize, Deserialize};
+  use serde::{Deserialize, Serialize};
 
   #[derive(Debug, Serialize, Deserialize, PartialEq)]
   #[serde(rename = "response")]
-  pub struct SMSGet{
+  pub struct SMSGet {
     #[serde(rename = "Count")]
-    pub count : i32,
+    pub count: i32,
     #[serde(rename = "Messages")]
     pub messages: Messages,
   }
 
   #[derive(Debug, Serialize, Deserialize, PartialEq)]
-  pub struct Messages{
+  pub struct Messages {
     #[serde(rename = "Message", default)]
     pub items: Vec<Message>,
   }
@@ -112,9 +112,9 @@ pub mod response {
 
   #[derive(Debug, Serialize, Deserialize, PartialEq)]
   #[serde(rename = "response")]
-  pub struct SMSGetEmpty{
+  pub struct SMSGetEmpty {
     #[serde(rename = "Count")]
-    pub count : i32,
+    pub count: i32,
   }
 
   #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -135,10 +135,10 @@ pub mod response {
 
   #[derive(Debug, Serialize, Deserialize, PartialEq)]
   #[serde(untagged)]
-  pub enum Responses{
+  pub enum Responses {
     Success(Success),
     Failed(Failed),
     SMSGet(SMSGet),
-    SMSEmpty(SMSGetEmpty)
+    SMSEmpty(SMSGetEmpty),
   }
 }

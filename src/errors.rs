@@ -18,10 +18,14 @@ pub enum Errors {
   Base64(#[cause] base64::DecodeError),
   #[fail(display = "{}", _0)]
   SerdeJSON(#[cause] serde_json::error::Error),
+  #[fail(display = "{}", _0)]
+  InvalidHeaderValue(#[cause] reqwest::header::InvalidHeaderValue),
+  #[fail(display = "{}", _0)]
+  InvalidHeaderName(#[cause] reqwest::header::InvalidHeaderName),
 }
 
-impl From<dotenv::Error> for Errors{
-  fn from(error : dotenv::Error) -> Errors{
+impl From<dotenv::Error> for Errors {
+  fn from(error: dotenv::Error) -> Errors {
     return Errors::DotEnv(error);
   }
 }
@@ -66,5 +70,17 @@ impl From<base64::DecodeError> for Errors {
 impl From<serde_json::Error> for Errors {
   fn from(error: serde_json::Error) -> Errors {
     return Errors::SerdeJSON(error);
+  }
+}
+
+impl From<reqwest::header::InvalidHeaderValue> for Errors {
+  fn from(error: reqwest::header::InvalidHeaderValue) -> Errors {
+    return Errors::InvalidHeaderValue(error);
+  }
+}
+
+impl From<reqwest::header::InvalidHeaderName> for Errors {
+  fn from(error: reqwest::header::InvalidHeaderName) -> Errors {
+    return Errors::InvalidHeaderName(error);
   }
 }
